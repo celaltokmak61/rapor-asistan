@@ -1,7 +1,122 @@
+window.I18N = window.I18N || {};
+window.I18N.setupWizard = {
+    en: {
+        modalTitle: 'Setup Wizard',
+        title: 'Setup Wizard',
+        modalDescription: "Scan your software's schema and train the assistant.",
+        description: "Scan your software's schema and train the assistant.",
+        appNameLabel: 'Application Name',
+        appName: 'Application Name',
+        appNameDefault: 'Report Assistant',
+        assistantNameLabel: 'Assistant Name',
+        assistantName: 'Assistant Name',
+        assistantNameDefault: 'Report-AI',
+        serverLabel: 'MSSQL Server',
+        server: 'MSSQL Server',
+        serverPlaceholder: 'localhost or SERVER\\INSTANCE',
+        databaseLabel: 'Database',
+        database: 'Database',
+        databasePlaceholder: 'ERPDB',
+        userLabel: 'User (leave empty for Windows Auth)',
+        user: 'User (leave empty for Windows Auth)',
+        passwordLabel: 'Password',
+        password: 'Password',
+        btnTestConnection: 'Test Connection and List Tables',
+        testConnection: 'Test Connection and List Tables',
+        connectionFailed: 'Connection failed',
+        loadingTables: 'Loading tables...',
+        tableListError: 'Failed to load tables:',
+        btnBack: 'Back',
+        back: 'Back',
+        selectTablesNotice: 'Select the tables you want to train the assistant on ({count} tables found).',
+        btnTeachSelected: 'Teach Selected Tables',
+        teachSelected: 'Teach Selected Tables',
+        ingestingSchema: 'Processing schema into memory...',
+        firmCodeLabel: 'Company / Branch Code',
+        firmCode: 'Company / Branch Code',
+        firmCodePlaceholder: 'F001 or MAIN',
+        firmNameLabel: 'Company / Branch Name',
+        firmName: 'Company / Branch Name',
+        firmNamePlaceholder: 'Headquarters',
+        ruleLabel: 'First business rule (optional)',
+        rule: 'First business rule (optional)',
+        rulePlaceholder: "e.g. Use STATUS = 1 for active stock. Product name column is MALINCINSI.",
+        btnFinish: 'Complete Setup',
+        finish: 'Complete Setup'
+    },
+    tr: {
+        modalTitle: 'Kurulum Sihirbazı',
+        title: 'Kurulum Sihirbazı',
+        modalDescription: 'Kendi yazılımınızın şemasını tarayıp asistanı eğitin.',
+        description: 'Kendi yazılımınızın şemasını tarayıp asistanı eğitin.',
+        appNameLabel: 'Uygulama Adı',
+        appName: 'Uygulama Adı',
+        appNameDefault: 'Rapor Asistan',
+        assistantNameLabel: 'Asistan Adı',
+        assistantName: 'Asistan Adı',
+        assistantNameDefault: 'Rapor-AI',
+        serverLabel: 'MSSQL Sunucu',
+        server: 'MSSQL Sunucu',
+        serverPlaceholder: 'localhost veya SUNUCU\\INSTANCE',
+        databaseLabel: 'Veritabanı',
+        database: 'Veritabanı',
+        databasePlaceholder: 'ERPDB',
+        userLabel: 'Kullanıcı (boşsa Windows Auth)',
+        user: 'Kullanıcı (boşsa Windows Auth)',
+        passwordLabel: 'Şifre',
+        password: 'Şifre',
+        btnTestConnection: 'Bağlantıyı Dene ve Tabloları Listele',
+        testConnection: 'Bağlantıyı Dene ve Tabloları Listele',
+        connectionFailed: 'Bağlantı başarısız',
+        loadingTables: 'Tablolar yükleniyor...',
+        tableListError: 'Tablo listesi alınamadı:',
+        btnBack: 'Geri',
+        back: 'Geri',
+        selectTablesNotice: 'Asistana öğretmek istediğiniz tabloları seçin ({count} tablo bulundu).',
+        btnTeachSelected: 'Seçilen Tabloları Öğret',
+        teachSelected: 'Seçilen Tabloları Öğret',
+        ingestingSchema: 'Şema hafızaya işleniyor...',
+        firmCodeLabel: 'Firma / Şube Kodu',
+        firmCode: 'Firma / Şube Kodu',
+        firmCodePlaceholder: 'F001 veya MAIN',
+        firmNameLabel: 'Firma / Şube Adı',
+        firmName: 'Firma / Şube Adı',
+        firmNamePlaceholder: 'Merkez',
+        ruleLabel: 'İlk iş kuralı (isteğe bağlı)',
+        rule: 'İlk iş kuralı (isteğe bağlı)',
+        rulePlaceholder: "Örn: Aktif stoklar için STATUS = 1 kullan. Ürün adı kolonu MALINCINSI'dir.",
+        btnFinish: 'Kurulumu Bitir',
+        finish: 'Kurulumu Bitir'
+    }
+};
+
+window.I18N.en = Object.assign(window.I18N.en || {}, window.I18N.setupWizard.en);
+window.I18N.tr = Object.assign(window.I18N.tr || {}, window.I18N.setupWizard.tr);
+
 const SetupWizard = {
     selectedTables: new Set(),
     appName: '',
     assistantName: '',
+    getLang() {
+        try {
+            const lang = localStorage.getItem('rapor_lang') || (navigator.language && navigator.language.startsWith('tr') ? 'tr' : 'en');
+            return lang === 'tr' ? 'tr' : 'en';
+        } catch (_) {
+            return 'en';
+        }
+    },
+    t(key, params) {
+        const lang = (this && typeof this.getLang === 'function') ? this.getLang() : SetupWizard.getLang();
+        const source = (window.I18N && window.I18N.setupWizard) || window.I18N || {};
+        const dict = source[lang] || source.en || {};
+        let text = dict[key] != null ? dict[key] : (source.en && source.en[key] != null ? source.en[key] : key);
+        if (params && typeof text === 'string') {
+            Object.keys(params).forEach((k) => {
+                text = text.replace(new RegExp(`\\{${k}\\}`, 'g'), params[k]);
+            });
+        }
+        return text;
+    },
     async init() {
         const cfg = window.KokpitConfig || {};
         if (!cfg.needsWizard || cfg.packId === 'demo') return;
@@ -18,8 +133,8 @@ const SetupWizard = {
             <div class="login-card" style="max-width: 720px; width: 92vw; text-align: left;">
                 <div class="login-header">
                     <div class="login-logo">🛠️</div>
-                    <h2>Kurulum Sihirbazı</h2>
-                    <p>Kendi yazılımınızın şemasını tarayıp asistanı eğitin.</p>
+                    <h2>${this.t('modalTitle')}</h2>
+                    <p>${this.t('modalDescription')}</p>
                 </div>
                 <div id="setupWizardStep"></div>
             </div>
@@ -29,15 +144,17 @@ const SetupWizard = {
     },
     showStep1() {
         const el = document.getElementById('setupWizardStep');
+        const defaultApp = (window.KokpitConfig && window.KokpitConfig.appName) || this.t('appNameDefault');
+        const defaultAssistant = (window.KokpitConfig && window.KokpitConfig.assistantName) || this.t('assistantNameDefault');
         el.innerHTML = `
-            <div class="login-form-group"><label>Uygulama Adı</label><input id="wizAppName" class="login-input" value="${window.KokpitConfig.appName || 'Rapor Asistan'}"></div>
-            <div class="login-form-group"><label>Asistan Adı</label><input id="wizAssistant" class="login-input" value="${window.KokpitConfig.assistantName || 'Rapor-AI'}"></div>
-            <div class="login-form-group"><label>MSSQL Sunucu</label><input id="wizServer" class="login-input" placeholder="localhost veya SUNUCU\\INSTANCE"></div>
-            <div class="login-form-group"><label>Veritabanı</label><input id="wizDatabase" class="login-input" placeholder="ERPDB"></div>
-            <div class="login-form-group"><label>Kullanıcı (boşsa Windows Auth)</label><input id="wizUser" class="login-input"></div>
-            <div class="login-form-group"><label>Şifre</label><input id="wizPassword" type="password" class="login-input"></div>
+            <div class="login-form-group"><label>${this.t('appNameLabel')}</label><input id="wizAppName" class="login-input" value="${defaultApp}"></div>
+            <div class="login-form-group"><label>${this.t('assistantNameLabel')}</label><input id="wizAssistant" class="login-input" value="${defaultAssistant}"></div>
+            <div class="login-form-group"><label>${this.t('serverLabel')}</label><input id="wizServer" class="login-input" placeholder="${this.t('serverPlaceholder')}"></div>
+            <div class="login-form-group"><label>${this.t('databaseLabel')}</label><input id="wizDatabase" class="login-input" placeholder="${this.t('databasePlaceholder')}"></div>
+            <div class="login-form-group"><label>${this.t('userLabel')}</label><input id="wizUser" class="login-input"></div>
+            <div class="login-form-group"><label>${this.t('passwordLabel')}</label><input id="wizPassword" type="password" class="login-input"></div>
             <div id="wizError" class="login-error-msg"></div>
-            <button class="btn-login-submit" type="button" onclick="SetupWizard.saveConnection()">Bağlantıyı Dene ve Tabloları Listele</button>
+            <button class="btn-login-submit" type="button" onclick="SetupWizard.saveConnection()">${this.t('btnTestConnection')}</button>
         `;
     },
     async saveConnection() {
@@ -57,11 +174,11 @@ const SetupWizard = {
             const json = await res.json().catch(() => ({}));
             if (!res.ok) {
                 const detail = json.detail;
-                const msg = Array.isArray(detail) ? JSON.stringify(detail) : (detail || json.error || 'Bağlantı başarısız');
+                const msg = Array.isArray(detail) ? JSON.stringify(detail) : (detail || json.error || this.t('connectionFailed'));
                 throw new Error(msg);
             }
-            this.appName = document.getElementById('wizAppName').value.trim() || 'Rapor Asistan';
-            this.assistantName = document.getElementById('wizAssistant').value.trim() || 'Rapor-AI';
+            this.appName = document.getElementById('wizAppName').value.trim() || (window.KokpitConfig && window.KokpitConfig.appName) || this.t('appNameDefault');
+            this.assistantName = document.getElementById('wizAssistant').value.trim() || (window.KokpitConfig && window.KokpitConfig.assistantName) || this.t('assistantNameDefault');
             await this.showStep2();
         } catch (e) {
             err.innerText = e.message;
@@ -70,18 +187,18 @@ const SetupWizard = {
     },
     async showStep2() {
         const el = document.getElementById('setupWizardStep');
-        el.innerHTML = `<p style="color:#d1fae5;">Tablolar yükleniyor...</p>`;
+        el.innerHTML = `<p style="color:#d1fae5;">${this.t('loadingTables')}</p>`;
         const res = await fetch('/api/v1/setup/tables');
         const json = await res.json().catch(() => ({}));
         if (!res.ok) {
-            el.innerHTML = `<p style="color:#fca5a5;">Tablo listesi alınamadı: ${json.detail || json.error || res.status}</p>
-            <button class="btn-login-submit" type="button" onclick="SetupWizard.showStep1()">Geri</button>`;
+            el.innerHTML = `<p style="color:#fca5a5;">${this.t('tableListError')} ${json.detail || json.error || res.status}</p>
+            <button class="btn-login-submit" type="button" onclick="SetupWizard.showStep1()">${this.t('btnBack')}</button>`;
             return;
         }
         const tables = json.tables || [];
         this.selectedTables = new Set(tables.slice(0, 25).map((t) => t.name));
         el.innerHTML = `
-            <p style="color:#d1fae5; font-size:13px;">Asistana öğretmek istediğiniz tabloları seçin (${tables.length} tablo bulundu).</p>
+            <p style="color:#d1fae5; font-size:13px;">${this.t('selectTablesNotice', { count: tables.length })}</p>
             <div style="max-height: 280px; overflow:auto; border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:8px; margin:12px 0;">
                 ${tables.map((t) => `
                     <label style="display:flex; gap:8px; color:#fff; font-size:12px; padding:4px 0;">
@@ -90,7 +207,7 @@ const SetupWizard = {
                     </label>
                 `).join('')}
             </div>
-            <button class="btn-login-submit" type="button" onclick="SetupWizard.ingestSelected()">Seçilen Tabloları Öğret</button>
+            <button class="btn-login-submit" type="button" onclick="SetupWizard.ingestSelected()">${this.t('btnTeachSelected')}</button>
         `;
     },
     toggleTable(name, checked) {
@@ -99,7 +216,7 @@ const SetupWizard = {
     },
     async ingestSelected() {
         const el = document.getElementById('setupWizardStep');
-        el.innerHTML = `<p style="color:#d1fae5;">Şema hafızaya işleniyor...</p>`;
+        el.innerHTML = `<p style="color:#d1fae5;">${this.t('ingestingSchema')}</p>`;
         await fetch('/api/v1/setup/ingest-tables', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -110,12 +227,12 @@ const SetupWizard = {
     showStep3() {
         const el = document.getElementById('setupWizardStep');
         el.innerHTML = `
-            <div class="login-form-group"><label>Firma / Şube Kodu</label><input id="wizFirmCode" class="login-input" placeholder="F001 veya MAIN"></div>
-            <div class="login-form-group"><label>Firma / Şube Adı</label><input id="wizFirmName" class="login-input" placeholder="Merkez"></div>
-            <div class="login-form-group"><label>İlk iş kuralı (isteğe bağlı)</label>
-                <textarea id="wizRule" class="login-input" style="min-height:80px;" placeholder="Örn: Aktif stoklar için STATUS = 1 kullan. Ürün adı kolonu MALINCINSI'dir."></textarea>
+            <div class="login-form-group"><label>${this.t('firmCodeLabel')}</label><input id="wizFirmCode" class="login-input" placeholder="${this.t('firmCodePlaceholder')}"></div>
+            <div class="login-form-group"><label>${this.t('firmNameLabel')}</label><input id="wizFirmName" class="login-input" placeholder="${this.t('firmNamePlaceholder')}"></div>
+            <div class="login-form-group"><label>${this.t('ruleLabel')}</label>
+                <textarea id="wizRule" class="login-input" style="min-height:80px;" placeholder="${this.t('rulePlaceholder')}"></textarea>
             </div>
-            <button class="btn-login-submit" type="button" onclick="SetupWizard.finish()">Kurulumu Bitir</button>
+            <button class="btn-login-submit" type="button" onclick="SetupWizard.finish()">${this.t('btnFinish')}</button>
         `;
     },
     async finish() {
@@ -140,8 +257,8 @@ const SetupWizard = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                app_name: this.appName || window.KokpitConfig.appName,
-                assistant_name: this.assistantName || window.KokpitConfig.assistantName
+                app_name: this.appName || (window.KokpitConfig && window.KokpitConfig.appName),
+                assistant_name: this.assistantName || (window.KokpitConfig && window.KokpitConfig.assistantName)
             })
         });
         const overlay = document.getElementById('setupWizardOverlay');
