@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Rapor Asistan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css?v=4.1.0">
+    <link rel="stylesheet" href="/static/css/cockpit.css?v=4.1.0">
+    <script src="/static/js/echarts.min.js"></script>
+</head>
+<body>
+    <header class="top-navbar">
+        <div class="brand-area">
+            <div class="brand-logo">👑</div>
+            <div class="brand-title">
+                <h1>RAPOR ASİSTAN</h1>
+                <span>Eğitilebilir Text-to-SQL raporlama</span>
+            </div>
+        </div>
+
+        <nav class="module-tabs">
+            <button class="tab-btn ai-tab active" data-module="ai_studio" id="navAiStudioBtn">
+                <span>🤖</span> <span>AI Stüdyosu</span>
+            </button>
+        </nav>
+
+        <div class="right-controls">
+            <select class="select-control" id="branchSelect">
+                <option value="ALL">Tüm kayıtlar</option>
+            </select>
+            <button class="btn btn-admin" id="btnLiveRefresh" title="Canlı veriyi tazele" style="padding: 6px 11px; font-size: 11.5px; font-weight: 700; border-color: #2cbe56; color: #4ade80;">
+                <span>⚡</span> <span class="refresh-text">Canlı Yenile</span>
+            </button>
+            <a href="/admin" class="btn btn-admin" id="btnAdminPanel" style="display: none;">⚙️ Admin / Eğitim</a>
+            <div class="user-badge-container" id="navUserBadge" style="display: none;"></div>
+            <button class="hamburger-btn" id="hamburgerBtn" title="Menüyü Aç"><span>☰</span></button>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+    <aside class="mobile-menu-drawer" id="mobileMenuDrawer">
+        <div class="mobile-drawer-header">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">👑</span>
+                <strong style="color: #fff; font-size: 15px;">RAPOR ASİSTAN</strong>
+            </div>
+            <button class="btn btn-admin" style="padding: 4px 10px; font-size: 14px;" id="mobileCloseBtn">✕</button>
+        </div>
+        <nav class="mobile-nav-list">
+            <button class="mobile-nav-btn active" style="background: linear-gradient(135deg, var(--primary), #1a382e); color:#fff;" data-module="ai_studio" id="mobileNavAiStudioBtn">
+                <span>🤖</span> <span>AI Stüdyosu</span>
+            </button>
+        </nav>
+        <div style="border-top: 1px solid var(--border-subtle); padding-top: 12px; display: flex; flex-direction: column; gap: 10px;">
+            <button class="btn btn-green" style="width: 100%; justify-content: center;" id="mobileExcelBtn">📥 Excel İndir</button>
+            <a href="/admin" class="btn btn-admin" style="width: 100%; justify-content: center;">⚙️ Yönetim & Eğitim</a>
+        </div>
+    </aside>
+
+    <main class="main-container">
+        <div id="standardModuleView" style="display: none;"></div>
+
+        <div id="aiStudioView" class="ai-studio-container" style="display: grid;">
+            <div class="ai-studio-mobile-tabs" id="aiStudioMobileTabs">
+                <button type="button" class="ai-studio-mobile-tab-btn active" id="btnStudioTabChat" onclick="switchStudioMobileTab('chat')">
+                    <span>💬</span> <span>Sohbet</span>
+                </button>
+                <button type="button" class="ai-studio-mobile-tab-btn" id="btnStudioTabDisplay" onclick="switchStudioMobileTab('display')">
+                    <span>📊</span> <span>Rapor</span>
+                    <span class="ai-tab-dot" id="studioTabDot" style="display: none;"></span>
+                </button>
+            </div>
+
+            <div class="ai-chat-panel">
+                <div class="ai-chat-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 22px;">🤖</span>
+                        <div>
+                            <h3 style="font-size: 14px; font-weight: 800; color: #fff;" id="studioAssistantTitle">Rapor-AI</h3>
+                            <span style="font-size: 10.5px; color: var(--primary);">Gemini / Groq / Ollama</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-admin" id="btnStudioClear" style="padding: 4px 10px; font-size: 11px;">🗑️ Sıfırla</button>
+                </div>
+
+                <div class="ai-chat-body" id="studioChatBody">
+                    <div class="bubble bubble-ai">
+                        Merhaba. Veritabanınıza bağlanıp şemanızı öğrettikten sonra doğal dille soru sorun; güvenli SELECT üretip tablo ve grafik çizerim.
+                    </div>
+                </div>
+
+                <div class="ai-chat-footer">
+                    <div class="ai-chips-scroll" id="studioPresetChips"></div>
+                    <div class="ai-input-wrap">
+                        <input type="text" id="studioInput" placeholder="Doğal dille sorun (ör. bu ayın satış özeti)..." autocomplete="off">
+                        <button class="btn btn-green" id="studioSendBtn">Gönder</button>
+                        <div class="fuzzy-suggestion-box" id="studioSuggestionBox" style="bottom: 100%; top: auto; margin-bottom: 8px;">
+                            <div class="fuzzy-suggestion-header">Bunu mu demek istediniz?</div>
+                            <div id="studioSuggestionList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ai-display-panel">
+                <div class="dynamic-report-banner" id="dynamicStudioBanner">
+                    <div class="report-banner-left">
+                        <div class="report-banner-icon" id="studioReportIcon">🤖</div>
+                        <div class="report-banner-text">
+                            <h2 id="studioReportTitle">AI Rapor Çıktısı</h2>
+                            <p id="studioReportSubtitle">Doğal dil → SQL → canlı veri</p>
+                        </div>
+                    </div>
+                    <div class="report-banner-tag" id="studioReportTag">AI</div>
+                </div>
+
+                <section class="kpi-row" id="studioKpiGrid">
+                    <div class="kpi-box">
+                        <div class="kpi-details"><span>SORGU</span><h2 id="studioRowCount">Hazır</h2></div>
+                        <div class="kpi-ico">⚡</div>
+                    </div>
+                </section>
+
+                <section class="chart-card" id="studioChartCard">
+                    <div class="chart-header">
+                        <h3 id="studioChartTitle">Görselleştirme</h3>
+                    </div>
+                    <div id="studioChart" class="chart-area"></div>
+                </section>
+
+                <section class="table-card">
+                    <div class="table-header-title-bar">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 22px;" id="studioTableReportIcon">📊</span>
+                            <div>
+                                <h3 id="studioTableReportTitle" style="font-size: 16px; font-weight: 800; color: #ffffff;">Sonuç Tablosu</h3>
+                                <span id="studioTableReportSubtitle" style="font-size: 11.5px; color: var(--mint);">Soru sorduktan sonra dolacak</span>
+                            </div>
+                        </div>
+                        <div class="report-banner-tag" id="studioTableReportTag">AI</div>
+                    </div>
+
+                    <div class="table-bar">
+                        <div class="search-field-container">
+                            <div class="search-field">
+                                <span>🔍</span>
+                                <input type="text" id="studioSearchInput" placeholder="Tabloda ara..." autocomplete="off">
+                            </div>
+                            <div class="fuzzy-suggestion-box" id="studioSearchSuggestionBox">
+                                <div class="fuzzy-suggestion-header">Öneri</div>
+                                <div id="studioSearchSuggestionList"></div>
+                            </div>
+                        </div>
+                        <div class="date-inputs-wrap">
+                            <input type="date" id="studioStartDate" class="date-input-field">
+                            <span style="color: var(--mint); font-size: 11px;">-</span>
+                            <input type="date" id="studioEndDate" class="date-input-field">
+                            <button class="btn btn-green" id="btnApplyStudioDate" style="padding: 4px 10px; font-size: 11.5px;">Uygula</button>
+                        </div>
+                        <button class="btn btn-excel-prominent" id="btnStudioExcelExport">
+                            <span>📥</span> <span id="btnStudioExcelExportText">Excel</span>
+                        </button>
+                    </div>
+                    <div id="studioDynamicFilterBar" class="studio-dynamic-filter-bar" style="display: none;"></div>
+                    <div class="table-scroll">
+                        <table class="report-table">
+                            <thead id="studioTableHeader"><tr><th>Sonuç</th></tr></thead>
+                            <tbody id="studioTableBody">
+                                <tr><td style="text-align:center; padding:40px; color:#d1fae5;">Soldan bir soru sorun.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-bar" id="studioPaginationBar">
+                        <div class="pagination-info">
+                            <span id="studioPageInfoText">0 kayıt</span>
+                            <div class="page-size-selector">
+                                <span>Sayfa:</span>
+                                <select id="studioPageSizeSelect" class="select-control" style="padding: 4px 8px; font-size: 11.5px;">
+                                    <option value="100" selected>100</option>
+                                    <option value="250">250</option>
+                                    <option value="500">500</option>
+                                    <option value="ALL">Tümü</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pagination-buttons">
+                            <button class="btn btn-admin btn-page" id="btnStudioFirst">⏮️</button>
+                            <button class="btn btn-admin btn-page" id="btnStudioPrev">◀️</button>
+                            <span class="page-badge" id="studioCurrentPageBadge">1 / 1</span>
+                            <button class="btn btn-admin btn-page" id="btnStudioNext">▶️</button>
+                            <button class="btn btn-admin btn-page" id="btnStudioLast">⏭️</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <button class="mobile-bottom-nav-item active" data-module="ai_studio">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">AI</span>
+        </button>
+    </nav>
+
+    <button class="copilot-btn" id="copilotLauncher">
+        <span>🤖</span>
+        <span>AI Asistan</span>
+    </button>
+    <div class="copilot-modal" id="copilotDrawer">
+        <div class="copilot-top">
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 20px;">🤖</span>
+                <div>
+                    <h4 style="font-size: 13.5px; font-weight: 700; color: #fff;">Rapor-AI</h4>
+                    <span style="font-size: 10px; color: var(--primary);">Gemini / Groq / Ollama</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 6px; align-items: center;">
+                <button class="btn btn-admin" style="padding: 3px 8px; font-size: 11px;" onclick="clearCopilotHistory()">🗑️</button>
+                <button class="btn btn-admin" style="padding: 2px 8px; font-size: 11px;" id="copilotCloseBtn">✕</button>
+            </div>
+        </div>
+        <div class="chat-content" id="copilotChatBody">
+            <div class="bubble bubble-ai">Merhaba. Doğal dille sorun, raporu üreteyim.</div>
+        </div>
+        <div class="ai-chips-scroll" id="copilotPresetChips" style="padding: 6px 12px; background: rgba(0,0,0,0.25); border-top: 1px solid rgba(255,255,255,0.06);"></div>
+        <div class="chat-input-bar">
+            <input type="text" id="copilotInput" placeholder="Soru yazın..." autocomplete="off">
+            <button class="btn btn-green" id="copilotSendBtn" style="padding: 8px 14px;">Gönder</button>
+            <div class="fuzzy-suggestion-box" id="copilotSuggestionBox" style="bottom: 100%; top: auto; margin-bottom: 8px;">
+                <div class="fuzzy-suggestion-header">Öneri</div>
+                <div id="copilotSuggestionList"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-modal-overlay" id="loginModalOverlay" style="display: none;">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">👑</div>
+                <h2>RAPOR ASİSTAN</h2>
+                <p>Eğitilebilir kurumsal raporlama</p>
+            </div>
+            <div class="login-error-msg" id="loginErrorMsg"></div>
+            <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+                <div class="login-form-group">
+                    <label for="loginUsername">Kullanıcı Adı</label>
+                    <input type="text" id="loginUsername" class="login-input" required autofocus autocomplete="username">
+                </div>
+                <div class="login-form-group">
+                    <label for="loginPassword">Şifre</label>
+                    <input type="password" id="loginPassword" class="login-input" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-login-submit" id="btnLoginSubmit">
+                    <span>🚀</span> <span>Giriş Yap</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/core/branding.js?v=4.1.0"></script>
+    <script src="/static/js/core/setup_wizard.js?v=4.1.0"></script>
+    <script src="/static/js/core/auth.js?v=4.1.0"></script>
+    <script src="/static/js/core/state.js?v=4.1.0"></script>
+    <script src="/static/js/core/utils.js?v=4.1.0"></script>
+    <script src="/static/js/core/ai_formatter.js?v=4.1.0"></script>
+    <script src="/static/js/core/table.js?v=4.1.0"></script>
+    <script src="/static/js/modules/ai_studio.js?v=4.1.0"></script>
+    <script src="/static/js/app.js?v=4.1.0"></script>
+    <script src="/static/js/copilot.js?v=4.1.0"></script>
+</body>
+</html>

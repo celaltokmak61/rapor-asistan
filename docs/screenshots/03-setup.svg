@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0d1f18"/>
+  <rect x="280" y="70" width="720" height="580" rx="20" fill="#132a22" stroke="#2cbe56"/>
+  <text x="640" y="130" text-anchor="middle" fill="#4ade80" font-family="Inter,Segoe UI,sans-serif" font-size="28" font-weight="800">Setup wizard</text>
+  <text x="640" y="162" text-anchor="middle" fill="#d1fae5" font-family="Inter,Segoe UI,sans-serif" font-size="14">Scan your own schema · generic pack</text>
+  <rect x="330" y="200" width="620" height="44" rx="8" fill="#0d1f18" stroke="#2cbe56" stroke-opacity=".5"/>
+  <text x="348" y="228" fill="#75a59e" font-family="Inter,Segoe UI,sans-serif" font-size="13">MSSQL server · localhost</text>
+  <rect x="330" y="258" width="620" height="44" rx="8" fill="#0d1f18" stroke="#2cbe56" stroke-opacity=".5"/>
+  <text x="348" y="286" fill="#75a59e" font-family="Inter,Segoe UI,sans-serif" font-size="13">Database · ERPDB</text>
+  <text x="330" y="340" fill="#ffffff" font-family="Inter,Segoe UI,sans-serif" font-size="14" font-weight="700">Tables discovered</text>
+  <g font-family="Inter,Segoe UI,sans-serif" font-size="13" fill="#d1fae5">
+    <text x="348" y="372">☑ customers</text>
+    <text x="348" y="398">☑ products</text>
+    <text x="348" y="424">☑ orders</text>
+    <text x="348" y="450">☑ order_items</text>
+    <text x="348" y="476">☑ inventory</text>
+  </g>
+  <rect x="330" y="520" width="620" height="48" rx="10" fill="#2cbe56"/>
+  <text x="640" y="551" text-anchor="middle" fill="#052e16" font-family="Inter,Segoe UI,sans-serif" font-size="16" font-weight="800">Teach selected tables</text>
+</svg>

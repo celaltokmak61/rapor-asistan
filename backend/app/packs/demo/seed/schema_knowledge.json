@@ -1,0 +1,12 @@
+[
+  {"entity_type": "firma", "code_or_name": "MAIN", "description": "Head office (main)", "details": {"ad": "Head office", "role": "main"}},
+  {"entity_type": "firma", "code_or_name": "IST", "description": "Istanbul warehouse (warehouse)", "details": {"ad": "Istanbul warehouse", "role": "warehouse"}},
+  {"entity_type": "firma", "code_or_name": "ANK", "description": "Ankara warehouse (warehouse)", "details": {"ad": "Ankara warehouse", "role": "warehouse"}},
+  {"entity_type": "firma", "code_or_name": "IZM", "description": "Izmir warehouse (warehouse)", "details": {"ad": "Izmir warehouse", "role": "warehouse"}},
+  {"entity_type": "table", "code_or_name": "customers", "description": "Customer master data", "details": {"columns": {"id": "INTEGER", "code": "TEXT", "name": "TEXT", "city": "TEXT", "segment": "TEXT", "status": "INTEGER"}}},
+  {"entity_type": "table", "code_or_name": "products", "description": "Product catalog", "details": {"columns": {"id": "INTEGER", "sku": "TEXT", "name": "TEXT", "category": "TEXT", "unit": "TEXT", "unit_price": "REAL", "status": "INTEGER"}}},
+  {"entity_type": "table", "code_or_name": "warehouses", "description": "Warehouse / branch locations", "details": {"columns": {"id": "INTEGER", "code": "TEXT", "name": "TEXT", "city": "TEXT"}}},
+  {"entity_type": "table", "code_or_name": "inventory", "description": "Current stock per product and warehouse", "details": {"columns": {"product_id": "INTEGER", "warehouse_id": "INTEGER", "qty": "REAL"}}},
+  {"entity_type": "table", "code_or_name": "orders", "description": "Sales orders", "details": {"columns": {"id": "INTEGER", "order_no": "TEXT", "customer_id": "INTEGER", "warehouse_id": "INTEGER", "order_date": "TEXT", "status": "TEXT", "total": "REAL"}}},
+  {"entity_type": "table", "code_or_name": "order_items", "description": "Sales order lines", "details": {"columns": {"id": "INTEGER", "order_id": "INTEGER", "product_id": "INTEGER", "qty": "REAL", "unit_price": "REAL", "line_total": "REAL"}}}
+]

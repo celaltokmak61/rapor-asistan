@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#0d1f18"/>
+  <rect x="24" y="24" width="1232" height="672" rx="18" fill="#132a22"/>
+  <text x="48" y="70" fill="#ffffff" font-family="Inter,Segoe UI,sans-serif" font-size="22" font-weight="800">Low stock items</text>
+  <text x="48" y="96" fill="#75a59e" font-family="Inter,Segoe UI,sans-serif" font-size="13">inventory.qty &lt; 20 · 8 rows · Golden SQL</text>
+  <rect x="1080" y="44" width="140" height="36" rx="8" fill="#2cbe56"/>
+  <text x="1150" y="67" text-anchor="middle" fill="#052e16" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="700">Excel</text>
+  <rect x="48" y="124" width="1184" height="40" rx="8" fill="#1a382e"/>
+  <text x="64" y="150" fill="#4ade80" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="700">SKU</text>
+  <text x="240" y="150" fill="#4ade80" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="700">Product</text>
+  <text x="620" y="150" fill="#4ade80" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="700">Warehouse</text>
+  <text x="920" y="150" fill="#4ade80" font-family="Inter,Segoe UI,sans-serif" font-size="13" font-weight="700">Qty</text>
+  <g fill="#ffffff" font-family="Inter,Segoe UI,sans-serif" font-size="14">
+    <text x="64" y="206">SKU-NUT-01</text><text x="240" y="206">Roasted Hazelnut 1kg</text><text x="620" y="206">Izmir warehouse</text><text x="920" y="206" fill="#f87171">4</text>
+    <text x="64" y="250">SKU-NUT-01</text><text x="240" y="250">Roasted Hazelnut 1kg</text><text x="620" y="250">Ankara warehouse</text><text x="920" y="250" fill="#f87171">6</text>
+    <text x="64" y="294">SKU-COF-01</text><text x="240" y="294">Espresso Beans 1kg</text><text x="620" y="294">Izmir warehouse</text><text x="920" y="294" fill="#fbbf24">8</text>
+    <text x="64" y="338">SKU-CHS-01</text><text x="240" y="338">Aged Kashkaval 500g</text><text x="620" y="338">Izmir warehouse</text><text x="920" y="338" fill="#fbbf24">9</text>
+    <text x="64" y="382">SKU-FLR-01</text><text x="240" y="382">Bread Flour 10kg</text><text x="620" y="382">Izmir warehouse</text><text x="920" y="382" fill="#fbbf24">11</text>
+  </g>
+</svg>

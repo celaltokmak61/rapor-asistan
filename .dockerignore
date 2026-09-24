@@ -1,0 +1,12 @@
+.git
+.github
+venv
+.venv
+__pycache__
+*.pyc
+backend/.env
+backend/app/db/knowledge.db
+backend/app/packs/vega
+graphify-out
+*.log
+.pytest_cache

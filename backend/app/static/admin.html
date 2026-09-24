@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapor Asistan - Yönetim & Eğitim Paneli</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/css/cockpit.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body style="overflow-y: auto;">
+
+    <div class="admin-container">
+        
+        <!-- Header -->
+        <header class="admin-header">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <a href="/" class="btn btn-admin">⬅️ Kokpite Dön</a>
+                <div>
+                    <h1 style="font-size: 20px; font-weight: 800; color: #fff;" id="adminPageTitle">⚙️ RAPOR ASİSTAN YÖNETİM & EĞİTİM PANELİ</h1>
+                    <span style="font-size: 12px; color: var(--mint);">AI Eğitimi, Altın SQL Hafızası, Rol Eşitleme & Kullanıcı Yetkileri</span>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <span class="badge badge-green" id="knowledgeCountBadge">67 Altın SQL • 64 Kural Aktif</span>
+                <div id="adminUserBadge" style="display: flex; align-items: center; gap: 8px;"></div>
+                <button class="btn btn-admin" onclick="AuthModule.logout()" style="padding: 6px 12px; color: #f87171;">🚪 Çıkış</button>
+            </div>
+        </header>
+
+        <!-- Sekmeler -->
+        <nav class="admin-tabs">
+            <button class="tab-btn active" data-tab="tabTrainer">🎓 AI Eğitim Kokpiti</button>
+            <button class="tab-btn" data-tab="tabGolden">⭐ Altın SQL & Kurumsal Hafıza</button>
+            <button class="tab-btn" data-tab="tabColumns">🔤 Kolon & Rol İsimlendirmeleri</button>
+            <button class="tab-btn" data-tab="tabUsers">👥 Kullanıcı & Şube Yetkileri</button>
+            <button class="tab-btn" data-tab="tabFrequentQuestions">💡 Önerilen Sık Sorular</button>
+        </nav>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 1: AI EĞİTİM -->
+        <!-- ========================================================================= -->
+        <div class="tab-pane active" id="tabTrainer">
+            
+            <!-- Doğal Dil Eğitim Konsolu -->
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between;">
+                    <h3>🧠 Doğal Dille Yapay Zekaya Kural / Bilgi Öğret</h3>
+                    <span style="font-size: 11.5px; color: var(--primary);">Gemini / Groq / Ollama Entegre</span>
+                </div>
+                <p style="font-size: 12.5px; color: var(--text-muted);">
+                    Yapay zekaya şirketinizin özel çalışma mantığını, formüllerini, kısaltmalarını veya SQL şablonlarını doğal Türkçe ile öğretin. Sistem kuralı anında SQLite <code>knowledge.db</code> kurumsal hafızasına işler ve bir daha asla unutmaz.
+                </p>
+
+                <div class="form-group" style="margin-top: 6px;">
+                    <label>Eğitim Talimatı / Yeni İş Kuralı / Soru-Cevap Şablonu</label>
+                    <textarea id="trainerInput" class="form-control sql-editor-textarea" style="min-height: 100px;" placeholder="Örnek:
+• 'Ürün adı kolonu STOK_ADI, aktif kayıtlar DURUM = 1.'
+• 'Ciro sorusunda SATIS tablosundan SUM(TUTAR) kullan.'
+• 'X sorusu sorulunca şu SQL çalışsın: SELECT ...'"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; justify-content: flex-end; margin-top: 10px;">
+                    <button class="btn btn-green" id="btnTrainAi" style="padding: 10px 20px;">
+                        <span>🧠</span> <span>Yapay Zekaya Öğret & Hafızaya İşle</span>
+                    </button>
+                </div>
+
+                <!-- Canlı Eğitim Sonuç Kartı -->
+                <div id="trainerResultCard" style="display: none; margin-top: 16px; background: #0d1f18; border: 1px solid var(--border-glow); border-radius: var(--radius-md); padding: 16px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                        <strong style="color: #4ade80; font-size: 14px;" id="trainResultTitle">✅ Kural Başarıyla Öğrenildi!</strong>
+                        <span style="font-size: 11px; color: var(--mint);" id="trainResultModel"></span>
+                    </div>
+                    <p style="font-size: 13px; color: #ffffff; line-height: 1.5;" id="trainResultExplanation"></p>
+                    
+                    <div id="trainSqlPreviewWrap" style="display: none; margin-top: 12px;">
+                        <label style="font-size: 11.5px; color: var(--mint); font-weight: 700;">Üretilen & Doğrulanan T-SQL Şablonu:</label>
+                        <pre style="background: #132a22; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 12px; color: #d1fae5; overflow-x: auto; margin-top: 4px;" id="trainSqlCode"></pre>
+                    </div>
+
+                    <div id="trainDataPreviewWrap" style="display: none; margin-top: 12px;">
+                        <label style="font-size: 11.5px; color: #4ade80; font-weight: 700;">⚡ Canlı MSSQL Test Çıktısı (İlk Satırlar):</label>
+                        <div class="table-scroll" style="max-height: 180px; margin-top: 6px;">
+                            <table class="report-table" id="trainPreviewTable">
+                                <thead id="trainPreviewHeader"></thead>
+                                <tbody id="trainPreviewBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hızlı Altın SQL Ekleme Formu -->
+            <div class="admin-card">
+                <h3>⭐ Hızlı Altın SQL Şablonu Ekle</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted);">
+                    Sık sorulan bir soruyu doğrudan onaylanmış bir T-SQL sorgusuyla eşleştirin. Bu sorular sorulduğunda yapay zeka düşünmeden 0.01 saniyede bu sorguyu çalıştırır.
+                </p>
+                <form id="formNewGoldenSql" style="display: flex; flex-direction: column; gap: 14px;">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Kullanıcının Sorabileceği Soru / Cümle Kalıbı</label>
+                            <input type="text" id="goldenSoru" class="form-control" placeholder="Örn: Bu ayın satış özeti" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Hedef Veritabanı</label>
+                            <select id="goldenTargetDb" class="form-control">
+                                <option value="">Varsayılan veritabanı</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Grafik Görselleştirme</label>
+                            <select id="goldenChartType" class="form-control">
+                                <option value="table">Tablo</option>
+                                <option value="bar">Sütun Grafik (Bar)</option>
+                                <option value="pie">Pasta / Halka Grafik (Pie)</option>
+                                <option value="line">Çizgi Grafik (Line)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Onaylanmış T-SQL Sorgusu</label>
+                        <textarea id="goldenSql" class="form-control sql-editor-textarea" placeholder="SELECT ProductName, SUM(Price * Quantity) AS Ciro FROM Bill WITH (NOLOCK) WHERE ..." required></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                        <button type="button" class="btn btn-admin" id="btnTestGoldenSql">⚡ Canlı MSSQL'de Test Et</button>
+                        <button type="submit" class="btn btn-green">💾 Altın SQL Olarak Kaydet</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 2: ⭐ ALTIN SQL & KURALLAR LİSTESİ -->
+        <!-- ========================================================================= -->
+        <div class="tab-pane" id="tabGolden">
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
+                    <div>
+                        <h3>⭐ Kayıtlı Altın SQL Şablonları</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);">Sistemde kayıtlı, anında çalışan onaylı T-SQL şablonları.</p>
+                    </div>
+                    <div class="search-field" style="width: 280px;">
+                        <span>🔍</span>
+                        <input type="text" id="filterGoldenInput" placeholder="Soru veya SQL içinde ara...">
+                    </div>
+                </div>
+
+                <div class="table-scroll" style="max-height: 450px; margin-top: 14px;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Soru / Kalıp</th>
+                                <th>Hedef DB</th>
+                                <th>Grafik</th>
+                                <th>T-SQL Sorgusu</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="goldenSqlTableBody">
+                            <!-- JS Dolduracak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="admin-card">
+                <h3>📚 Kayıtlı Serbest İş Kuralları & Notlar</h3>
+                <div class="table-scroll" style="max-height: 300px; margin-top: 10px;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Öğrenilmiş Kural / İş Mantığı</th>
+                                <th>Kayıt Tarihi</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="learnedNotesTableBody">
+                            <!-- JS Dolduracak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 3: 🔤 KOLON & ROL İSİMLENDİRMELERİ -->
+        <!-- ========================================================================= -->
+        <div class="tab-pane" id="tabColumns">
+            <div class="admin-card">
+                <h3>📝 Yeni Kolon Görüntüleme Adı Ata</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted);">
+                    Örn: <code>MALINCINSI</code> kolonunu <code>Malın Cinsi</code> veya <code>Ürün Adı</code> olarak değiştirdiğinizde, tüm rapor tablolarının başlıkları ve Yapay Zekanın SQL şablonları bu ismi kullanacaktır.
+                </p>
+                <form id="formColumnName" class="form-row" style="margin-top: 10px;">
+                    <div class="form-group">
+                        <label>Veritabanı Kolon Adı (DB Column)</label>
+                        <input type="text" id="dbColumnInput" class="form-control" placeholder="Örn: MALINCINSI" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Ekranda ve AI'da Görünecek Ad (Display Label)</label>
+                        <input type="text" id="displayNameInput" class="form-control" placeholder="Örn: Malın Cinsi" required>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-green" style="height: 42px;">💾 Kaydet & Eşitle</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3>📋 Mevcut Kolon Eşleştirmeleri</h3>
+                <div id="columnMappingsList" style="margin-top: 10px;">
+                    <!-- JS Dolduracak -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 4: 👥 KULLANICI & ŞUBE YETKİLERİ -->
+        <!-- ========================================================================= -->
+        <div class="tab-pane" id="tabUsers">
+            <div class="admin-card">
+                <h3>➕ Yeni Kullanıcı Tanımla</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted);">
+                    Sisteme yeni bir çalışan tanımlayın. <strong>Admin</strong> kullanıcıları hem Kokpite hem de bu Admin Paneline erişebilir. <strong>User</strong> kullanıcıları yalnızca Kokpit raporlama ekranına erişebilir.
+                </p>
+                <form id="formNewUser" class="form-row" style="margin-top: 10px;">
+                    <div class="form-group">
+                        <label>Adı Soyadı</label>
+                        <input type="text" id="newFullName" class="form-control" placeholder="Örn: Celal Tokmak / Tuncay Usta" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Kullanıcı Adı</label>
+                        <input type="text" id="newUsername" class="form-control" placeholder="Örn: celal / tuncay" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Şifre</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="••••••••" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Yetki / Rolü</label>
+                        <select id="newUserRole" class="form-control">
+                            <option value="user" selected>👤 Standart Kullanıcı (User - Sadece Kokpit)</option>
+                            <option value="admin">👑 Sistem Yöneticisi (Admin - Kokpit + Admin Paneli)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="justify-content: flex-end;">
+                        <button type="submit" class="btn btn-green" style="height: 42px;">➕ Kullanıcı Ekle</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <h3>👥 Tanımlı Kullanıcılar & Yetki Kapsamları</h3>
+                <div class="table-scroll" style="max-height: 350px; margin-top: 10px;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Adı Soyadı</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Yetki Rolü</th>
+                                <th>Oluşturulma Tarihi</th>
+                                <th>İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- JS Dolduracak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- TAB 5: 💡 YAPAY ZEKA ÖNERİLEN & EN ÇOK KULLANILAN SORGULAR -->
+        <!-- ========================================================================= -->
+        <div class="tab-pane" id="tabFrequentQuestions">
+            <div class="admin-card">
+                <h3>➕ Yeni Önerilen Soru Ekle</h3>
+                <p style="font-size: 12.5px; color: var(--text-muted);">
+                    Yapay zeka analiz ekranında (AI Studio ve Copilot) patronun ve yöneticilerin önüne buton olarak gelecek hazır hızlı soruları belirleyin. Yıldızlananlar (⭐) her zaman en üstte sabitlenir.
+                </p>
+                <form id="formNewFrequentQuestion" style="margin-top: 12px; display: flex; flex-direction: column; gap: 12px;">
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 2.5;">
+                            <label>Soru Metni (Yapay Zekaya Gönderilecek Tam Cümle)</label>
+                            <input type="text" id="newQuestionText" class="form-control" placeholder="Örn: Bu ayın satış özeti" required>
+                        </div>
+                        <div class="form-group" style="flex: 1.5;">
+                            <label>Çip / Buton Başlığı (Kısa Etiket)</label>
+                            <input type="text" id="newChipLabel" class="form-control" placeholder="Örn: Aylık satış">
+                        </div>
+                    </div>
+                    <div class="form-row" style="align-items: flex-end;">
+                        <div class="form-group" style="flex: 1.2;">
+                            <label>Kategori</label>
+                            <select id="newQuestionCategory" class="form-control">
+                                <option value="Satış">Satış</option>
+                                <option value="Stok">Stok</option>
+                                <option value="Finans">Finans</option>
+                                <option value="Yönetici" selected>Yönetici</option>
+                                <option value="Genel">Genel</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Başlangıç Frekansı (Ağırlık)</label>
+                            <input type="number" id="newAskCount" class="form-control" value="1" min="1">
+                        </div>
+                        <div class="form-group" style="flex: 1.2; justify-content: center;">
+                            <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; height: 38px; font-weight: 600; color: #fbbf24;">
+                                <input type="checkbox" id="newIsPinned" style="width: 18px; height: 18px; accent-color: #fbbf24;">
+                                <span>⭐ Sabitlensin</span>
+                            </label>
+                        </div>
+                        <div class="form-group" style="flex: 1.2; justify-content: flex-end;">
+                            <button type="submit" class="btn btn-green" style="height: 38px; width: 100%; justify-content: center;">
+                                <span>➕</span> <span>Soru Önerisi Ekle</span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="admin-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h3>💡 Aktif Soru Çipleri & Kullanım İstatistikleri</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">
+                            Yıldızına (⭐) tıklayarak soruyu anında sabitleyebilir veya kaldırabilirsiniz. ✏️ Düzenle butonuyla metni, etiketi ve frekansı güncelleyebilirsiniz.
+                        </p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="filterQuestionsInput" class="form-control" placeholder="🔍 Soru veya etiket ara..." style="width: 220px; font-size: 12px;">
+                        <button class="btn btn-admin" onclick="loadFrequentQuestions()" title="Yenile" style="padding: 6px 10px;">🔄 Yenile</button>
+                    </div>
+                </div>
+
+                <div class="table-scroll" style="max-height: 450px; margin-top: 12px;">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px; text-align: center;">Sabit</th>
+                                <th style="width: 160px;">Kısa Çip Etiketi</th>
+                                <th>Yapay Zekaya Gönderilen Soru Metni</th>
+                                <th style="width: 120px;">Kategori</th>
+                                <th style="width: 90px; text-align: center;">Sorulma</th>
+                                <th style="width: 90px; text-align: center;">Dönem</th>
+                                <th style="width: 140px; text-align: center;">İşlem</th>
+                            </tr>
+                        </thead>
+                        <tbody id="frequentQuestionsTableBody">
+                            <!-- JS Dolduracak -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ✏️ KULLANICI DÜZENLEME MODAL OVERLAY -->
+    <div class="login-modal-overlay" id="userEditModalOverlay" style="display: none;">
+        <div class="login-card" style="max-width: 460px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 24px;">✏️</span>
+                    <h2 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;" id="editModalTitle">Kullanıcı Düzenle</h2>
+                </div>
+                <button class="btn btn-admin" style="padding: 4px 10px; font-size: 14px;" onclick="closeEditUserModal()">✕</button>
+            </div>
+
+            <form id="formEditUser" onsubmit="handleEditUserSubmit(event)">
+                <input type="hidden" id="editUserId">
+
+                <div class="login-form-group">
+                    <label for="editFullName">Adı Soyadı</label>
+                    <input type="text" id="editFullName" class="login-input" required>
+                </div>
+
+                <div class="login-form-group">
+                    <label for="editUsername">Kullanıcı Adı (Değiştirilemez)</label>
+                    <input type="text" id="editUsername" class="login-input" disabled style="opacity: 0.6; cursor: not-allowed;">
+                </div>
+
+                <div class="login-form-group">
+                    <label for="editPassword">Yeni Şifre</label>
+                    <input type="password" id="editPassword" class="login-input" placeholder="Değiştirmek istemiyorsanız boş bırakın">
+                </div>
+
+                <div class="login-form-group">
+                    <label for="editRole">Yetki Rolü</label>
+                    <select id="editRole" class="login-input">
+                        <option value="user">👤 Standart Kullanıcı (User - Sadece Kokpit)</option>
+                        <option value="admin">👑 Sistem Yöneticisi (Admin - Kokpit + Admin Paneli)</option>
+                    </select>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ⚠️ ÇAKIŞAN & BENZER ALTIN SORGU KARŞILAŞTIRMA MODALI -->
+    <!-- ========================================================================= -->
+    <div id="trainingConflictModal" class="login-modal-overlay" style="display: none;">
+        <div class="login-modal-card" style="max-width: 950px; width: 95vw; max-height: 90vh; overflow-y: auto; text-align: left; padding: 24px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-glow); padding-bottom: 12px; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 24px;">⚖️</span>
+                    <div>
+                        <h3 style="font-size: 16px; font-weight: 800; color: #f59e0b; margin: 0;">Benzer / Çakışan Altın Sorgu Bulundu!</h3>
+                        <span style="font-size: 12px; color: var(--text-muted);">Yapay zeka hafızasında bu rapora çok benzeyen bir kayıt tespit edildi. Lütfen karşılaştırıp tercihinizi yapın.</span>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-admin" onclick="closeConflictModal()" style="padding: 4px 8px;">✕</button>
+            </div>
+
+            <!-- Karşılaştırma Izgarası -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                
+                <!-- Sol: Mevcut Kayıtlı Sorgu -->
+                <div style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 8px; padding: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span class="badge" style="background: #334155; color: #94a3b8; font-size: 11px;">📂 MEVCUT HAFIZADAKİ KAYIT</span>
+                        <span class="badge badge-amber" id="conflictExistingId">ID: --</span>
+                    </div>
+                    <h4 style="font-size: 13px; color: #f1f5f9; margin: 6px 0;" id="conflictExistingTitle">Mevcut Rapor Başlığı</h4>
+                    <p style="font-size: 11.5px; color: #94a3b8; line-height: 1.4; margin-bottom: 8px;" id="conflictExistingDesc"></p>
+                    
+                    <label style="font-size: 10.5px; color: var(--mint); font-weight: 700;">Mevcut T-SQL:</label>
+                    <pre id="conflictExistingSql" style="background: #09121a; padding: 8px; border-radius: 4px; font-size: 11px; color: #93c5fd; max-height: 120px; overflow: auto; margin: 4px 0 10px 0;"></pre>
+                    
+                    <label style="font-size: 10.5px; color: #38bdf8; font-weight: 700;">Canlı Çıktı Özeti (İlk 5 Satır):</label>
+                    <div class="table-scroll" style="max-height: 140px; margin-top: 4px;">
+                        <table class="report-table" style="font-size: 11px;" id="conflictExistingTable">
+                            <thead id="conflictExistingHead"></thead>
+                            <tbody id="conflictExistingBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Sağ: Yeni Eğitilen / Girilen Sorgu -->
+                <div style="background: rgba(6, 44, 32, 0.7); border: 1px solid #059669; border-radius: 8px; padding: 14px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                        <span class="badge badge-green" style="font-size: 11px;">✨ YENİ EĞİTİLEN RAPOR</span>
+                        <span class="badge" style="background: #047857; color: #a7f3d0; font-size: 11px;">Yapay Zeka Önerisi</span>
+                    </div>
+                    <h4 style="font-size: 13px; color: #4ade80; margin: 6px 0;" id="conflictNewTitle">Yeni Rapor Başlığı</h4>
+                    <p style="font-size: 11.5px; color: #a7f3d0; line-height: 1.4; margin-bottom: 8px;" id="conflictNewDesc"></p>
+                    
+                    <label style="font-size: 10.5px; color: var(--mint); font-weight: 700;">Yeni T-SQL:</label>
+                    <pre id="conflictNewSql" style="background: #022014; padding: 8px; border-radius: 4px; font-size: 11px; color: #86efac; max-height: 120px; overflow: auto; margin: 4px 0 10px 0;"></pre>
+                    
+                    <label style="font-size: 10.5px; color: #4ade80; font-weight: 700;">Canlı Çıktı Özeti (İlk 5 Satır):</label>
+                    <div class="table-scroll" style="max-height: 140px; margin-top: 4px;">
+                        <table class="report-table" style="font-size: 11px;" id="conflictNewTable">
+                            <thead id="conflictNewHead"></thead>
+                            <tbody id="conflictNewBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Aksiyon Butonları -->
+            <div style="display: flex; gap: 12px; justify-content: flex-end; align-items: center; border-top: 1px solid var(--border-glow); padding-top: 16px;">
+                <button type="button" class="btn btn-admin" onclick="closeConflictModal()">✕ Vazgeç / İptal Et</button>
+                <button type="button" class="btn btn-amber" id="btnConflictReplace" style="padding: 10px 16px;">
+                    <span>🔄</span> <span>Mevcut Sorguyu Güncelle (Üzerine Yaz)</span>
+                </button>
+                <button type="button" class="btn btn-green" id="btnConflictKeepBoth" style="padding: 10px 16px;">
+                    <span>➕</span> <span>İkisini de Sakla (Yeni Olarak Ekle)</span>
+                </button>
+            </div>
+        </div>
+    <!-- ✏️ SORU ÖNERİSİ DÜZENLEME MODAL OVERLAY -->
+    <div class="login-modal-overlay" id="questionEditModalOverlay" style="display: none;">
+        <div class="login-card" style="max-width: 540px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 24px;">✏️</span>
+                    <h2 style="font-size: 18px; font-weight: 700; color: #fff; margin: 0;">Soru Önerisini Düzenle</h2>
+                </div>
+                <button class="btn btn-admin" style="padding: 4px 10px; font-size: 14px;" onclick="closeEditQuestionModal()">✕</button>
+            </div>
+
+            <form id="formEditFrequentQuestion" onsubmit="handleEditQuestionSubmit(event)">
+                <input type="hidden" id="editQuestionId">
+
+                <div class="login-form-group">
+                    <label for="editQuestionText">Soru Metni (Tam Cümle)</label>
+                    <textarea id="editQuestionText" class="login-input" rows="3" required style="resize: vertical; font-family: inherit; font-size: 13px; line-height: 1.4;"></textarea>
+                </div>
+
+                <div class="login-form-group">
+                    <label for="editChipLabel">Çip / Buton Başlığı (Kısa Etiket)</label>
+                    <input type="text" id="editChipLabel" class="login-input" required>
+                </div>
+
+                <div class="login-form-group">
+                    <label for="editQuestionCategory">Kategori</label>
+                    <select id="editQuestionCategory" class="login-input">
+                        <option value="Satış">Satış</option>
+                        <option value="Stok">Stok</option>
+                        <option value="Finans">Finans</option>
+                        <option value="Yönetici">Yönetici</option>
+                        <option value="Genel">Genel</option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+                    <div>
+                        <label for="editAskCount" style="font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px;">Sorulma Sayısı (Ağırlık)</label>
+                        <input type="number" id="editAskCount" class="login-input" min="1" required>
+                    </div>
+                    <div style="display: flex; align-items: center; margin-top: 20px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #fbbf24; font-weight: 600; font-size: 13px;">
+                            <input type="checkbox" id="editIsPinned" style="width: 18px; height: 18px; accent-color: #fbbf24;">
+                            <span>⭐ Sabitli Tut</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 14px;">
+                    <button type="button" class="btn btn-admin" onclick="closeEditQuestionModal()">✕ İptal</button>
+                    <button type="submit" class="btn btn-green">💾 Değişiklikleri Kaydet</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <script src="/static/js/core/auth.js?v=2.5.0"></script>
+    <script src="/static/js/core/branding.js?v=4.0.0"></script>
+<script src="/static/js/core/auth.js?v=4.0.0"></script>
+<script src="/static/js/admin.js?v=4.0.0"></script>
+</body>
+</html>

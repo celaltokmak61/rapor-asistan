@@ -1,0 +1,72 @@
+[
+  {
+    "soru": "this month sales by customer",
+    "sql_query": "SELECT c.name AS customer, ROUND(SUM(o.total), 2) AS revenue, COUNT(o.id) AS orders FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status = 'completed' AND o.order_date >= date('now', 'start of month') GROUP BY c.name ORDER BY revenue DESC",
+    "chart_type": "bar",
+    "target_database": "demo",
+    "aciklama": "Completed order revenue by customer for the current month"
+  },
+  {
+    "soru": "bu ayın satış özeti",
+    "sql_query": "SELECT c.name AS customer, ROUND(SUM(o.total), 2) AS revenue, COUNT(o.id) AS orders FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status = 'completed' AND o.order_date >= date('now', 'start of month') GROUP BY c.name ORDER BY revenue DESC",
+    "chart_type": "bar",
+    "target_database": "demo",
+    "aciklama": "Bu ay tamamlanan sipariş cirosu müşteri bazında"
+  },
+  {
+    "soru": "top products by revenue",
+    "sql_query": "SELECT p.category, p.name AS product, ROUND(SUM(i.line_total), 2) AS revenue, ROUND(SUM(i.qty), 2) AS qty FROM order_items i JOIN products p ON p.id = i.product_id JOIN orders o ON o.id = i.order_id WHERE o.status = 'completed' GROUP BY p.category, p.name ORDER BY revenue DESC",
+    "chart_type": "bar",
+    "target_database": "demo",
+    "aciklama": "Completed sales revenue and quantity by product"
+  },
+  {
+    "soru": "en çok satan ürünler",
+    "sql_query": "SELECT p.category, p.name AS product, ROUND(SUM(i.line_total), 2) AS revenue, ROUND(SUM(i.qty), 2) AS qty FROM order_items i JOIN products p ON p.id = i.product_id JOIN orders o ON o.id = i.order_id WHERE o.status = 'completed' GROUP BY p.category, p.name ORDER BY revenue DESC",
+    "chart_type": "bar",
+    "target_database": "demo",
+    "aciklama": "Tamamlanan satışlara göre ürün cirosu"
+  },
+  {
+    "soru": "low stock items",
+    "sql_query": "SELECT p.sku, p.name AS product, p.category, w.name AS warehouse, inv.qty FROM inventory inv JOIN products p ON p.id = inv.product_id JOIN warehouses w ON w.id = inv.warehouse_id WHERE p.status = 1 AND inv.qty < 20 ORDER BY inv.qty ASC, p.name",
+    "chart_type": "table",
+    "target_database": "demo",
+    "aciklama": "Active products with warehouse qty below 20"
+  },
+  {
+    "soru": "eksiye düşen stokları listele",
+    "sql_query": "SELECT p.sku, p.name AS product, p.category, w.name AS warehouse, inv.qty FROM inventory inv JOIN products p ON p.id = inv.product_id JOIN warehouses w ON w.id = inv.warehouse_id WHERE p.status = 1 AND inv.qty < 20 ORDER BY inv.qty ASC, p.name",
+    "chart_type": "table",
+    "target_database": "demo",
+    "aciklama": "Depo miktarı 20'nin altında olan aktif ürünler"
+  },
+  {
+    "soru": "revenue by category",
+    "sql_query": "SELECT p.category, ROUND(SUM(i.line_total), 2) AS revenue, ROUND(SUM(i.qty), 2) AS qty FROM order_items i JOIN products p ON p.id = i.product_id JOIN orders o ON o.id = i.order_id WHERE o.status = 'completed' GROUP BY p.category ORDER BY revenue DESC",
+    "chart_type": "pie",
+    "target_database": "demo",
+    "aciklama": "Completed revenue share by product category"
+  },
+  {
+    "soru": "kategori bazında ciro",
+    "sql_query": "SELECT p.category, ROUND(SUM(i.line_total), 2) AS revenue, ROUND(SUM(i.qty), 2) AS qty FROM order_items i JOIN products p ON p.id = i.product_id JOIN orders o ON o.id = i.order_id WHERE o.status = 'completed' GROUP BY p.category ORDER BY revenue DESC",
+    "chart_type": "pie",
+    "target_database": "demo",
+    "aciklama": "Kategori bazında tamamlanan ciro"
+  },
+  {
+    "soru": "monthly sales trend",
+    "sql_query": "SELECT substr(o.order_date, 1, 7) AS month, ROUND(SUM(o.total), 2) AS revenue, COUNT(o.id) AS orders FROM orders o WHERE o.status = 'completed' GROUP BY substr(o.order_date, 1, 7) ORDER BY month",
+    "chart_type": "line",
+    "target_database": "demo",
+    "aciklama": "Completed revenue trend by month"
+  },
+  {
+    "soru": "aylık ciro trendi",
+    "sql_query": "SELECT substr(o.order_date, 1, 7) AS month, ROUND(SUM(o.total), 2) AS revenue, COUNT(o.id) AS orders FROM orders o WHERE o.status = 'completed' GROUP BY substr(o.order_date, 1, 7) ORDER BY month",
+    "chart_type": "line",
+    "target_database": "demo",
+    "aciklama": "Aylık tamamlanan ciro trendi"
+  }
+]

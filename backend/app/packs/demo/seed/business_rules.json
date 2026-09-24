@@ -1,0 +1,4 @@
+[
+  {"category": "STOK", "rule_name": "Low stock threshold", "rule_text": "Warn when warehouse qty is below 20 for an active product.", "min_margin_pct": null, "max_loss_pct": null, "severity": "UYARI", "action_recommendation": "Reorder or transfer from another warehouse."},
+  {"category": "SATIŞ", "rule_name": "Completed revenue only", "rule_text": "Revenue KPIs must use completed orders only.", "min_margin_pct": null, "max_loss_pct": null, "severity": "KRİTİK_UYARI", "action_recommendation": "Exclude open drafts from ciro / revenue totals."}
+]

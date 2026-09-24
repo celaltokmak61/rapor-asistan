@@ -1,0 +1,4 @@
+[
+  {"title": "Honest numbers", "description": "Report only completed, auditable sales. Never inflate open orders as revenue.", "priority": "KRİTİK"},
+  {"title": "Stock visibility", "description": "Surface low stock before it becomes a stock-out. Warehouse qty below 20 is a warning.", "priority": "YÜKSEK"}
+]

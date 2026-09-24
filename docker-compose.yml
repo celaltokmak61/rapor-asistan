@@ -1,0 +1,21 @@
+services:
+  rapor-asistan:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      ACTIVE_PACK: demo
+      DB_BACKEND: sqlite
+      SQL_DIALECT: sqlite
+      APP_NAME: Rapor Asistan
+      ASSISTANT_NAME: Rapor-AI
+      ADMIN_USERNAME: admin
+      ADMIN_PASSWORD: admin123
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    volumes:
+      - knowledge-data:/app/backend/app/db
+    restart: unless-stopped
+
+volumes:
+  knowledge-data:

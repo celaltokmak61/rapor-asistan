@@ -1,0 +1,3 @@
+# SQLite veritabanı dosyaları için otomatik ikili (binary) birleştirme kuralı
+*.db binary merge=ours
+*.sqlite binary merge=ours

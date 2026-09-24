@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+    branches: [main, celal]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: pip install -r backend/requirements.txt
+      - name: Build demo database
+        run: python backend/app/packs/demo/data/build_demo_db.py
+      - name: Compile
+        working-directory: backend
+        env:
+          ACTIVE_PACK: demo
+          DB_BACKEND: sqlite
+          SQL_DIALECT: sqlite
+          GEMINI_API_KEY: ""
+          GROQ_API_KEY: ""
+        run: python -m compileall app -q
+      - name: Pytest
+        working-directory: backend
+        env:
+          ACTIVE_PACK: demo
+          DB_BACKEND: sqlite
+          SQL_DIALECT: sqlite
+          GEMINI_API_KEY: ""
+          GROQ_API_KEY: ""
+          PYTHONPATH: .
+        run: python -m pytest tests -q

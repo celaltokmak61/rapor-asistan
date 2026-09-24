@@ -1,0 +1,7 @@
+[
+  {"question_text": "this month sales by customer", "chip_label": "Monthly sales", "category": "Sales", "is_pinned": 1, "ask_count": 12, "month_key": "2026-09"},
+  {"question_text": "top products by revenue", "chip_label": "Top products", "category": "Sales", "is_pinned": 1, "ask_count": 9, "month_key": "2026-09"},
+  {"question_text": "low stock items", "chip_label": "Low stock", "category": "Stock", "is_pinned": 1, "ask_count": 8, "month_key": "2026-09"},
+  {"question_text": "revenue by category", "chip_label": "By category", "category": "Sales", "is_pinned": 0, "ask_count": 6, "month_key": "2026-09"},
+  {"question_text": "monthly sales trend", "chip_label": "Trend", "category": "Sales", "is_pinned": 0, "ask_count": 5, "month_key": "2026-09"}
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "anomaly_type": "LOW_STOCK",
+    "title": "Low stock playbook",
+    "check_steps": ["Check inventory qty by warehouse", "See last 30-day sales velocity", "Transfer from a warehouse with surplus"],
+    "root_cause_guide": "Low stock is usually uneven warehouse allocation, not a missing purchase.",
+    "action_template": "Open a transfer from the warehouse with the highest qty of the same SKU."
+  }
+]

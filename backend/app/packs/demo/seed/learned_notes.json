@@ -1,0 +1,6 @@
+[
+  {"note_text": "Active customers and products use status = 1. Inactive rows must be excluded unless the user asks for closed accounts."},
+  {"note_text": "Completed revenue uses orders.status = 'completed'. Open orders are not revenue."},
+  {"note_text": "Low stock means inventory.qty < 20 for active products."},
+  {"note_text": "Join order lines to products with order_items.product_id = products.id and to orders with order_items.order_id = orders.id."}
+]

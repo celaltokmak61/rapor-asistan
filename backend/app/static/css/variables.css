@@ -1,0 +1,73 @@
+/* ==========================================================================
+   DESIGN TOKENS
+   ========================================================================== */
+
+:root {
+  /* Ana Zümrüt Renk Paleti */
+  --bg-deep: #060e0a;
+  --bg-surface: #0d1f18;
+  --bg-card: rgba(13, 31, 24, 0.75);
+  --bg-card-hover: rgba(26, 56, 46, 0.85);
+
+  --primary: #2cbe56;
+  --primary-glow: rgba(44, 190, 86, 0.4);
+  --primary-subtle: rgba(44, 190, 86, 0.15);
+
+  --mint: #4ade80;
+  --emerald-dark: #132a22;
+  --emerald-border: #1a382e;
+
+  --accent-gold: #fbbf24;
+  --accent-cyan: #38bdf8;
+  --accent-purple: #a78bfa;
+  --accent-pink: #f472b6;
+
+  --danger: #ef4444;
+  --danger-bg: rgba(239, 68, 68, 0.15);
+  --danger-border: rgba(239, 68, 68, 0.3);
+
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(44, 190, 86, 0.3);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+
+
+select option {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-main) !important;
+  padding: 8px 12px;
+  font-weight: 600;
+}
+
+select:focus option:checked {
+  background-color: var(--emerald-dark) !important;
+  color: var(--mint) !important;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
