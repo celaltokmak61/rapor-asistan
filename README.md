@@ -4,7 +4,7 @@ Trainable **Text-to-SQL reporting cockpit**. Connect any database, teach the sch
 
 Clone → run → ask. No MSSQL required for the demo.
 
-[![CI](https://github.com/celaltokmak61/RaporAsistan/actions/workflows/ci.yml/badge.svg)](https://github.com/celaltokmak61/RaporAsistan/actions/workflows/ci.yml)
+[![CI](https://github.com/celaltokmak61/rapor-asistan/actions/workflows/ci.yml/badge.svg)](https://github.com/celaltokmak61/rapor-asistan/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
 
 ## 60-second demo

@@ -19,7 +19,7 @@ if %errorlevel% neq 0 (
 
 if not exist ".git" (
     echo [1/3] Proje GitHub'dan indiriliyor...
-    git clone https://github.com/celaltokmak61/RaporAsistan.git .
+    git clone https://github.com/celaltokmak61/rapor-asistan.git .
 ) else (
     echo [1/3] Mevcut klasor guncelleniyor...
     git pull --no-rebase origin main
